@@ -1,12 +1,23 @@
-# JobTrack
+<p align="center">
+  <img src="apps/desktop/app-icon.png" width="112" alt="JobTrack icon">
+</p>
 
-Track every job you apply to with one field. Paste a link or type "Company, Role", and JobTrack handles the rest: follow-up reminders, stage history, interview log, and honest stats about what's working.
+<h1 align="center">JobTrack</h1>
 
-Runs as a website (with accounts) and as Mac and Windows apps (data stays on your computer, no account).
+<p align="center">
+  Track every job you apply to with one field.<br>
+  Paste a link or type "Company, Role". Follow-ups, history and stats take care of themselves.
+</p>
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Foss-aryanroy%2Fjobtrack&root-directory=apps%2Fweb&project-name=jobtrack&repository-name=jobtrack&products=%5B%7B%22type%22%3A%22integration%22%2C%22protocol%22%3A%22storage%22%2C%22productSlug%22%3A%22neon%22%2C%22integrationSlug%22%3A%22neon%22%7D%5D)
+<p align="center">
+  Website with accounts · Mac and Windows apps with no account
+</p>
 
-The button creates a Vercel project with a free Neon Postgres database. Tables are created automatically on the first build.
+<p align="center">
+  <a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Foss-aryanroy%2Fjobtrack&root-directory=apps%2Fweb&project-name=jobtrack&repository-name=jobtrack&products=%5B%7B%22type%22%3A%22integration%22%2C%22protocol%22%3A%22storage%22%2C%22productSlug%22%3A%22neon%22%2C%22integrationSlug%22%3A%22neon%22%7D%5D"><img src="https://vercel.com/button" alt="Deploy with Vercel"></a>
+</p>
+
+<p align="center"><sub>Creates a Vercel project with a free Neon Postgres database. Tables are set up on the first build.</sub></p>
 
 ## Features
 
