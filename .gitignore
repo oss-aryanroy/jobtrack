@@ -1,0 +1,11 @@
+node_modules
+dist
+.next
+.vercel
+.env*
+!.env.example
+target
+*.tsbuildinfo
+.DS_Store
+next-env.d.ts
+apps/desktop/src-tauri/gen
