@@ -9,6 +9,7 @@ const UPDATED = "4 October 2026";
 
 export default function Privacy() {
   return (
+    <div className="doc-page">
     <main className="doc">
       <header className="doc-head">
         <Link href="/" aria-label="JobTrack home"><AppMark size={40} /></Link>
@@ -86,5 +87,6 @@ export default function Privacy() {
         <a href="https://github.com/oss-aryanroy/jobtrack/issues">open an issue on GitHub</a>.
       </p>
     </main>
+    </div>
   );
 }

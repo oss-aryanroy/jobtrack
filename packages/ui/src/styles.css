@@ -357,7 +357,8 @@ select.field { height: 34px; padding: 0 8px; }
 }
 .jt-inner { flex: 1; min-width: 0; display: flex; min-height: 0; }
 
-.doc { max-width: 68ch; margin: 0 auto; padding: 56px 24px 80px; font-size: 16px; line-height: 1.65; color: var(--ink-2); overflow-y: auto; height: 100%; }
+.doc-page { height: 100%; overflow-y: auto; background: var(--bg); }
+.doc { max-width: 68ch; margin: 0 auto; padding: 56px 24px 80px; font-size: 16px; line-height: 1.65; color: var(--ink-2); }
 .doc-head { display: flex; align-items: center; gap: 16px; margin-bottom: 28px; }
 .doc-head a { display: inline-flex; }
 .doc h1 { margin: 0; font-size: 32px; line-height: 1.15; letter-spacing: -0.015em; color: var(--ink); }
