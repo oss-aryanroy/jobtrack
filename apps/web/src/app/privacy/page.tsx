@@ -3,6 +3,7 @@ import Link from "next/link";
 import { AppMark } from "@jobtrack/ui/mark";
 
 export const metadata: Metadata = { title: "Privacy · JobTrack" };
+export const dynamic = "force-dynamic";
 
 const UPDATED = "4 October 2026";
 
