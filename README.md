@@ -25,6 +25,7 @@
 - **Automatic follow-ups** after you apply and after interviews, with one-click Done, snooze or "no reply".
 - **Board, calendar, interviews and companies** views, plus search and commands with ⌘K / Ctrl+K.
 - **Honest numbers**: reply and interview rates show their sample size and say "too few" instead of a misleading percentage.
+- **End-to-end encrypted website**: applications are encrypted in your browser with a key derived from your password (Argon2id + AES-GCM). The server, and whoever runs it, only stores ciphertext.
 - **Portable data**: export a `.jobtrack` file from any copy (Mac, Windows, website) and import it into any other. CSV import and export too.
 - Light and dark mode, undo for every change.
 

@@ -1,8 +1,11 @@
 create table if not exists users (
   id uuid primary key default gen_random_uuid(),
   username text not null unique,
-  password_hash text not null,
+  auth_hash text not null,
   recovery_hash text not null,
+  wrapped_key text not null,
+  wrapped_key_recovery text not null,
+  kdf jsonb not null,
   failed_logins integer not null default 0,
   locked_until timestamptz,
   created_at timestamptz not null default now()

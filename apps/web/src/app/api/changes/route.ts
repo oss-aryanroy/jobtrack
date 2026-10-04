@@ -10,10 +10,15 @@ const MAX_ROWS_PER_REQUEST = 80_000;
 const MAX_RECORDS_PER_USER = 300_000;
 const CHUNK = 1000;
 
-type Row = { id: string };
+type Row = { id: string; iv: string; ct: string };
 const isTable = (t: string): t is Table => (TABLES as readonly string[]).includes(t);
+const B64 = /^[A-Za-z0-9+/]*={0,2}$/;
+const isSealed = (v: unknown): v is { iv: string; ct: string } =>
+  typeof v === "object" && v !== null &&
+  typeof (v as Row).iv === "string" && (v as Row).iv.length === 16 && B64.test((v as Row).iv) &&
+  typeof (v as Row).ct === "string" && (v as Row).ct.length > 0 && (v as Row).ct.length <= MAX_ROW_BYTES && B64.test((v as Row).ct);
 const isRow = (r: unknown): r is Row =>
-  typeof r === "object" && r !== null && !Array.isArray(r) && typeof (r as Row).id === "string" && (r as Row).id.length > 0 && (r as Row).id.length <= 100;
+  isSealed(r) && typeof (r as Row).id === "string" && (r as Row).id.length > 0 && (r as Row).id.length <= 100;
 
 const bad = (error: string, status = 400) => Response.json({ error }, { status });
 
@@ -32,13 +37,13 @@ export async function POST(req: Request) {
     return bad("invalid JSON");
   }
 
-  const upserts: { kind: Table; id: string; data: Row }[] = [];
+  const upserts: { kind: Table; id: string; data: { iv: string; ct: string } }[] = [];
   const deletes: { kind: Table; ids: string[] }[] = [];
   for (const [kind, rows] of Object.entries(body.upserts ?? {})) {
     if (!isTable(kind) || !Array.isArray(rows)) return bad(`unknown table ${kind}`);
     for (const row of rows) {
-      if (!isRow(row) || JSON.stringify(row).length > MAX_ROW_BYTES) return bad(`invalid row in ${kind}`);
-      upserts.push({ kind, id: row.id, data: row });
+      if (!isRow(row)) return bad(`invalid row in ${kind}`);
+      upserts.push({ kind, id: row.id, data: { iv: row.iv, ct: row.ct } });
     }
   }
   for (const [kind, ids] of Object.entries(body.deletes ?? {})) {
@@ -47,7 +52,7 @@ export async function POST(req: Request) {
   }
   if (upserts.length + deletes.reduce((n, d) => n + d.ids.length, 0) > MAX_ROWS_PER_REQUEST) return bad("too many changes at once", 413);
   const settings = body.settings;
-  if (settings !== undefined && (typeof settings !== "object" || settings === null || JSON.stringify(settings).length > 4096)) return bad("invalid settings");
+  if (settings !== undefined && !isSealed(settings)) return bad("invalid settings");
 
   if (upserts.length) {
     const [row] = await sql<{ count: number }[]>`select count(*)::int as count from records where user_id = ${user.id}`;
