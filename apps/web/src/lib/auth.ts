@@ -3,12 +3,12 @@ import { createHash, randomBytes, scrypt as scryptCb, timingSafeEqual } from "no
 import { promisify } from "node:util";
 import { cookies } from "next/headers";
 import { sql } from "./db";
+import { clientIp, count, loginBuckets, minutesBlocked, reset, tooMany } from "./throttle";
 
 const scrypt = promisify(scryptCb) as (pw: string, salt: Buffer, len: number, opts: object) => Promise<Buffer>;
 const SCRYPT = { N: 16384, r: 8, p: 1, maxmem: 64 * 1024 * 1024 };
 const SESSION_COOKIE = "jt_session";
 const SESSION_DAYS = 30;
-const MAX_FAILED = 5;
 
 export const AUTH_KEY_RULE = /^[A-Za-z0-9+/]{43}=$/;
 export const WRAPPED_KEY_RULE = /^[A-Za-z0-9+/]{16}\.[A-Za-z0-9+/=]{40,80}$/;
@@ -71,32 +71,24 @@ interface UserRow {
   recovery_hash: string;
   wrapped_key: string;
   wrapped_key_recovery: string;
-  failed_logins: number;
-  locked_until: Date | null;
 }
 
 export type Check = { ok: true; user: UserRow } | { ok: false; error: string };
 
 export async function checkSecret(username: string, secret: string, which: "auth" | "recovery"): Promise<Check> {
   const mismatch = which === "auth" ? "That username and password don't match." : "That username and recovery code don't match.";
+  const buckets = loginBuckets(username, await clientIp());
+  const blocked = await minutesBlocked(buckets);
+  if (blocked > 0) return { ok: false, error: tooMany(blocked) };
   const [user] = await sql<UserRow[]>`
-    select id, auth_hash, recovery_hash, wrapped_key, wrapped_key_recovery, failed_logins, locked_until
-    from users where username = ${username}`;
-  if (!user || !AUTH_KEY_RULE.test(secret)) {
-    await verifySecret(secret, DUMMY_HASH);
+    select id, auth_hash, recovery_hash, wrapped_key, wrapped_key_recovery from users where username = ${username}`;
+  const valid = user && AUTH_KEY_RULE.test(secret)
+    ? await verifySecret(secret, which === "auth" ? user.auth_hash : user.recovery_hash)
+    : await verifySecret(secret, DUMMY_HASH).then(() => false);
+  if (!user || !valid) {
+    await count(buckets);
     return { ok: false, error: mismatch };
   }
-  if (user.locked_until && user.locked_until > new Date()) {
-    const minutes = Math.ceil((user.locked_until.getTime() - Date.now()) / 60_000);
-    return { ok: false, error: `Too many attempts. Try again in ${minutes} minute${minutes === 1 ? "" : "s"}.` };
-  }
-  if (!(await verifySecret(secret, which === "auth" ? user.auth_hash : user.recovery_hash))) {
-    const failed = user.failed_logins + 1;
-    const lockMinutes = failed >= MAX_FAILED ? Math.min(60, 2 ** (failed - MAX_FAILED)) : 0;
-    await sql`update users set failed_logins = ${failed},
-      locked_until = ${lockMinutes ? new Date(Date.now() + lockMinutes * 60_000) : null} where id = ${user.id}`;
-    return { ok: false, error: mismatch };
-  }
-  await sql`update users set failed_logins = 0, locked_until = null where id = ${user.id}`;
+  await reset(buckets.slice(1, 2));
   return { ok: true, user };
 }

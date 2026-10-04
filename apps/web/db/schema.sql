@@ -6,8 +6,6 @@ create table if not exists users (
   wrapped_key text not null,
   wrapped_key_recovery text not null,
   kdf jsonb not null,
-  failed_logins integer not null default 0,
-  locked_until timestamptz,
   created_at timestamptz not null default now()
 );
 
@@ -29,4 +27,15 @@ create table if not exists records (
 create table if not exists user_settings (
   user_id uuid primary key references users(id) on delete cascade,
   data jsonb not null
+);
+
+alter table users drop column if exists failed_logins;
+alter table users drop column if exists locked_until;
+
+create table if not exists attempts (
+  scope text not null,
+  key text not null,
+  failures integer not null,
+  window_start timestamptz not null,
+  primary key (scope, key)
 );

@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { DEFAULT_KDF, type KdfParams, USERNAME_RULE, isAcceptableKdf, normalizeUsername } from "@jobtrack/core/vault";
 import { sql } from "@/lib/db";
 import { AUTH_KEY_RULE, WRAPPED_KEY_RULE, checkSecret, currentUser, endSession, hashSecret, startSession } from "@/lib/auth";
+import { type Bucket, clientIp, count, minutesBlocked } from "@/lib/throttle";
 
 type Result<T = object> = ({ ok: true } & T) | { ok: false; error: string };
 
@@ -32,12 +33,16 @@ export async function signUp(usernameRaw: string, keys: NewKeys): Promise<Result
   const username = normalizeUsername(usernameRaw);
   if (!USERNAME_RULE.test(username)) return { ok: false, error: "Usernames are 3–32 characters: letters, numbers, dots, dashes or underscores." };
   if (!validKeys(keys)) return { ok: false, error: "Something went wrong preparing your account. Try again." };
+  const signupBucket: Bucket[] = [["signup", await clientIp()]];
+  const blocked = await minutesBlocked(signupBucket);
+  if (blocked > 0) return { ok: false, error: `Too many new accounts from your network. Try again in ${blocked} minutes.` };
   const [authHash, recoveryHash] = await Promise.all([hashSecret(keys.authKey), hashSecret(keys.recoveryAuth)]);
   const inserted = await sql<{ id: string }[]>`
     insert into users (username, auth_hash, recovery_hash, wrapped_key, wrapped_key_recovery, kdf)
     values (${username}, ${authHash}, ${recoveryHash}, ${keys.wrappedKey}, ${keys.wrappedKeyRecovery}, ${sql.json(keys.kdf as never)})
     on conflict (username) do nothing returning id`;
   if (!inserted[0]) return { ok: false, error: "That username is taken. Try another." };
+  await count(signupBucket);
   await startSession(inserted[0].id);
   return { ok: true };
 }

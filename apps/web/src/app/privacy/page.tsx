@@ -40,7 +40,7 @@ export default function Privacy() {
       <p>
         Because of the encryption, we can't see company names, roles, salaries, notes or anything else you enter. We can see that
         your account exists, when it was created, roughly how many records it holds, and when you sign in. Like any website, the
-        hosting provider records IP addresses and request times in its logs.
+        hosting provider records IP addresses and request times in its logs. To stop password guessing, we also keep failed sign-in attempts (the username tried and the IP address) for up to a day.
       </p>
 
       <h2>Cookies and tracking</h2>
