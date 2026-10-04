@@ -1,0 +1,56 @@
+name: Release desktop apps
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            args: --target universal-apple-darwin
+            rust-targets: aarch64-apple-darwin,x86_64-apple-darwin
+          - os: windows-latest
+            args: ""
+            rust-targets: ""
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.rust-targets }}
+
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: apps/desktop/src-tauri -> target
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm test
+
+      - uses: tauri-apps/tauri-action@action-v1.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          projectPath: apps/desktop
+          tauriScript: pnpm tauri
+          args: ${{ matrix.args }}
+          tagName: v__VERSION__
+          releaseName: JobTrack v__VERSION__
+          releaseBody: "Mac: open the .dmg. The app isn't notarized yet, so on first launch go to System Settings → Privacy & Security → Open Anyway. Windows: run the .exe or .msi installer and choose More info → Run anyway if SmartScreen warns."
+          releaseDraft: true

@@ -41,6 +41,8 @@ pnpm --filter @jobtrack/desktop tauri dev
 pnpm --filter @jobtrack/desktop tauri build
 ```
 
+**Releases:** push a tag like `v0.1.0` (matching the version in `apps/desktop/src-tauri/tauri.conf.json`) and GitHub Actions builds the Mac `.dmg` and Windows installers into a draft release.
+
 **Tests:**
 
 ```sh
