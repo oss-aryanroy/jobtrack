@@ -1,0 +1,28 @@
+{
+  "name": "@jobtrack/web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev --port 3000",
+    "build": "node --env-file-if-exists=.env.local scripts/migrate.mjs && next build",
+    "start": "next start",
+    "migrate": "node --env-file-if-exists=.env.local scripts/migrate.mjs",
+    "typecheck": "tsc -p . --noEmit"
+  },
+  "dependencies": {
+    "@jobtrack/core": "workspace:*",
+    "@jobtrack/ui": "workspace:*",
+    "next": "^16.3.8",
+    "postgres": "^3.4.9",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "server-only": "^0.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.4",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "typescript": "^7.0.2"
+  }
+}
