@@ -305,7 +305,8 @@ select.field { height: 34px; padding: 0 8px; }
 
 .welcome { position: fixed; inset: 0; z-index: 40; background: var(--rail); color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 22px; padding: 32px; }
 .welcome p { margin: 0; max-width: 46ch; font-size: 16px; color: #c9c3dc; }
-.app-icon { width: 84px; height: 84px; border-radius: 22px; background: var(--add); display: flex; align-items: center; justify-content: center; box-shadow: 0 18px 40px rgba(124, 58, 237, 0.35); }
+.app-icon { display: inline-flex; border-radius: 22%; box-shadow: 0 18px 40px rgba(124, 58, 237, 0.35); align-self: flex-start; }
+.welcome .app-icon { align-self: center; }
 .setup { position: fixed; inset: 0; z-index: 40; background: var(--list); display: flex; align-items: center; justify-content: center; padding: 24px; }
 .setup-card { width: min(580px, 100%); display: flex; flex-direction: column; gap: 16px; }
 .grp { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; }

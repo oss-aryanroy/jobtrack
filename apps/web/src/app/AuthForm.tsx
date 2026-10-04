@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useActionState, useState } from "react";
+import { AppMark } from "@jobtrack/ui";
 import type { FormState } from "./actions";
 
 type Mode = "login" | "signup" | "recover";
@@ -46,11 +47,7 @@ export function AuthForm({ mode, action }: { mode: Mode; action: (s: FormState, 
   return (
     <main className="setup">
       <form className="setup-card" action={formAction} style={{ maxWidth: 420 }}>
-        <span className="app-icon" style={{ width: 56, height: 56, borderRadius: 15 }} aria-hidden="true">
-          <svg width="28" height="28" viewBox="0 0 20 20" fill="none" stroke="#fff" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M5 6h10a2 2 0 0 1 2 2v6.5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2zM7.5 6V4.5a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1V6" />
-          </svg>
-        </span>
+        <span className="app-icon"><AppMark size={56} /></span>
         <div>
           <h1 style={{ margin: 0, fontSize: 24, letterSpacing: "-0.015em" }}>{copy.title}</h1>
           <p className="muted" style={{ margin: "4px 0 0", fontSize: 14 }}>{copy.sub}</p>

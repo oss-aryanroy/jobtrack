@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { Settings } from "@jobtrack/core";
 import { useApp } from "../context";
-import { Icon } from "./Icon";
+import { AppMark } from "./AppMark";
 import { SettingsRows } from "./SettingsSheet";
 
 export function Onboarding({ onDone }: { onDone(): void }) {
@@ -12,7 +12,7 @@ export function Onboarding({ onDone }: { onDone(): void }) {
   if (step === "welcome") {
     return (
       <div className="welcome" role="dialog" aria-modal="true" aria-label="Welcome to JobTrack">
-        <span className="app-icon"><Icon name="briefcase" size={42} stroke={1.6} /></span>
+        <span className="app-icon"><AppMark size={84} /></span>
         <h1 style={{ margin: 0, fontSize: 38, lineHeight: 1.12, letterSpacing: "-0.02em" }}>Welcome to JobTrack</h1>
         <p>Paste a job link and get back to applying. JobTrack fills in the rest, tells you when to follow up, and keeps your history in one place.</p>
         <button className="big-btn" autoFocus onClick={() => setStep("defaults")}>Next</button>
