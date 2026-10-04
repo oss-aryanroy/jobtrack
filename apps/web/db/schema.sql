@@ -1,3 +1,14 @@
+do $$
+begin
+  if exists (select 1 from information_schema.columns where table_schema = 'public' and table_name = 'users' and column_name = 'password_hash') then
+    create schema if not exists legacy;
+    alter table if exists public.records set schema legacy;
+    alter table if exists public.user_settings set schema legacy;
+    alter table if exists public.sessions set schema legacy;
+    alter table public.users set schema legacy;
+  end if;
+end $$;
+
 create table if not exists users (
   id uuid primary key default gen_random_uuid(),
   username text not null unique,
