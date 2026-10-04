@@ -180,6 +180,7 @@ export function SettingsSheet({ onClose }: { onClose(): void }) {
               <span className="l">Signed in as<span className="h">{platform.account.name}</span></span>
               <button className="btn" onClick={platform.account.signOut}>Sign out</button>
             </div>
+            {platform.account.deleteAccount && <DeleteAccountRow onDelete={platform.account.deleteAccount} onExport={exportBackup} />}
           </div>
         )}
       </div>
@@ -187,3 +188,44 @@ export function SettingsSheet({ onClose }: { onClose(): void }) {
   );
 }
 
+
+function DeleteAccountRow({ onDelete, onExport }: { onDelete(password: string): Promise<string | null>; onExport(): void }) {
+  const [open, setOpen] = useState(false);
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  if (!open) {
+    return (
+      <div className="grp-row">
+        <span className="l">Delete account<span className="h">Removes your account and every application from the server</span></span>
+        <button className="btn danger" onClick={() => setOpen(true)}>Delete account…</button>
+      </div>
+    );
+  }
+  return (
+    <form
+      className="grp-row"
+      style={{ flexDirection: "column", alignItems: "stretch", gap: 10, padding: 14 }}
+      onSubmit={async (e) => {
+        e.preventDefault();
+        setBusy(true);
+        setError(await onDelete(password));
+        setBusy(false);
+      }}
+    >
+      <span style={{ fontWeight: 700, color: "var(--bad-ink)" }}>Delete your account for good?</span>
+      <span className="small muted">
+        This can't be undone. Your account and all of its applications are removed from the server right away.{" "}
+        <button type="button" className="link" onClick={onExport}>Export a .jobtrack copy first</button> if you want to keep them.
+      </span>
+      <input className="field" type="password" placeholder="Your password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} autoFocus required aria-label="Your password" />
+      {error && <div className="notice bad" role="alert">{error}</div>}
+      <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+        <button type="button" className="btn" onClick={() => { setOpen(false); setPassword(""); setError(null); }}>Cancel</button>
+        <button type="submit" className="btn" disabled={busy || !password} style={{ background: "var(--bad-ink)", color: "#fff", borderColor: "transparent" }}>
+          {busy ? "Deleting…" : "Delete forever"}
+        </button>
+      </div>
+    </form>
+  );
+}

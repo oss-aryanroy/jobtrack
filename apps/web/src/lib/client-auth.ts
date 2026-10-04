@@ -9,8 +9,8 @@ import {
   unwrapDataKey,
   wrapDataKey,
 } from "@jobtrack/core/vault";
-import { type NewKeys, beginRecovery, finishRecovery, kdfFor, logIn, signUp } from "@/app/actions";
-import { saveKey } from "./keystore";
+import { type NewKeys, beginRecovery, deleteAccount as deleteAccountOnServer, finishRecovery, kdfFor, logIn, signUp } from "@/app/actions";
+import { forgetKeys, saveKey } from "./keystore";
 
 type Outcome = { ok: true; recoveryCode?: string } | { ok: false; error: string };
 
@@ -85,4 +85,14 @@ export async function recoverAccount(username: string, code: string, newPassword
   if (!finished.ok) return finished;
   await remember(username, keys.wrappedKey, kek);
   return { ok: true, recoveryCode };
+}
+
+export async function deleteAccount(username: string, password: string): Promise<string | null> {
+  const kdf = await paramsFor(username);
+  if (!kdf) return WEAK_PARAMS;
+  const { authKey } = await deriveKeys(password, username, "password", kdf);
+  const result = await deleteAccountOnServer(authKey);
+  if (!result.ok) return result.error;
+  await forgetKeys();
+  return null;
 }

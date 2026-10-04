@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { DEFAULT_KDF, type KdfParams, USERNAME_RULE, isAcceptableKdf, normalizeUsername } from "@jobtrack/core/vault";
 import { sql } from "@/lib/db";
-import { AUTH_KEY_RULE, WRAPPED_KEY_RULE, checkSecret, endSession, hashSecret, startSession } from "@/lib/auth";
+import { AUTH_KEY_RULE, WRAPPED_KEY_RULE, checkSecret, currentUser, endSession, hashSecret, startSession } from "@/lib/auth";
 
 type Result<T = object> = ({ ok: true } & T) | { ok: false; error: string };
 
@@ -66,6 +66,16 @@ export async function finishRecovery(usernameRaw: string, recoveryAuth: string, 
     await tx`delete from sessions where user_id = ${result.user.id}`;
   });
   await startSession(result.user.id);
+  return { ok: true };
+}
+
+export async function deleteAccount(authKey: string): Promise<Result> {
+  const user = await currentUser();
+  if (!user) return { ok: false, error: "You're signed out. Sign in again to delete your account." };
+  const result = await checkSecret(user.username, authKey, "auth");
+  if (!result.ok) return { ok: false, error: result.error.replace("That username and password don't match.", "That password isn't right.") };
+  await sql`delete from users where id = ${user.id}`;
+  await endSession();
   return { ok: true };
 }
 

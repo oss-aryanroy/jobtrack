@@ -5,7 +5,7 @@ import { type Dataset, TABLES, emptyDataset } from "@jobtrack/core";
 import { type Sealed, seal, unseal } from "@jobtrack/core/vault";
 import { AppMark, JobTrackApp, type Platform, type Store, browserFiles } from "@jobtrack/ui";
 import { forgetKeys, loadKey } from "@/lib/keystore";
-import { unlock } from "@/lib/client-auth";
+import { deleteAccount, unlock } from "@/lib/client-auth";
 import { logOut } from "./actions";
 
 async function call(input: string, init?: RequestInit) {
@@ -121,7 +121,15 @@ function Unlocked({ username, dataKey }: { username: string; dataKey: CryptoKey 
       os: /Mac|iPhone|iPad/.test(ua) ? "mac" : /Windows/.test(ua) ? "windows" : "other",
       ...browserFiles,
       openUrl: (url) => window.open(url, "_blank", "noopener"),
-      account: { name: username, signOut },
+      account: {
+        name: username,
+        signOut,
+        async deleteAccount(password: string) {
+          const error = await deleteAccount(username, password);
+          if (!error) location.href = "/login?deleted=1";
+          return error;
+        },
+      },
       isFirstRun: () => {
         try {
           return localStorage.getItem(onboarded) !== "1";

@@ -13,7 +13,7 @@ export interface Platform {
   openFile(accept: string[]): Promise<{ name: string; bytes: Uint8Array } | null>;
   openUrl(url: string): void;
   notify?(title: string, body: string): void;
-  account?: { name: string; signOut(): void };
+  account?: { name: string; signOut(): void; deleteAccount?(password: string): Promise<string | null> };
   isFirstRun(): boolean;
   markOnboarded(): void;
 }

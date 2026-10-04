@@ -14,7 +14,7 @@ const COPY: Record<Mode, { title: string; sub: string; submit: string; busy: str
   recover: { title: "Reset your password", sub: "Use the recovery code you saved when you signed up.", submit: "Set new password", busy: "Unlocking with your code…" },
 };
 
-export function AuthForm({ mode }: { mode: Mode }) {
+export function AuthForm({ mode, notice }: { mode: Mode; notice?: string }) {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [recoveryCode, setRecoveryCode] = useState<string | null>(null);
@@ -83,6 +83,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
           <h1 style={{ margin: 0, fontSize: 24, letterSpacing: "-0.015em" }}>{copy.title}</h1>
           <p className="muted" style={{ margin: "4px 0 0", fontSize: 14 }}>{copy.sub}</p>
         </div>
+        {notice && <div className="notice" role="status">{notice}</div>}
         <label className="small muted" style={{ display: "flex", flexDirection: "column", gap: 5 }}>
           Username
           <input className="field" name="username" autoComplete="username" autoCapitalize="none" spellCheck={false} required autoFocus />
