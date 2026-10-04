@@ -106,9 +106,10 @@ export function AuthForm({ mode, notice }: { mode: Mode; notice?: string }) {
           {mode !== "login" && <Link href="/login">Sign in</Link>}
           {mode !== "signup" && <Link href="/signup">Create an account</Link>}
           {mode !== "recover" && <Link href="/recover">Forgot password</Link>}
+          <Link href="/privacy">Privacy</Link>
         </p>
         <p className="small muted" style={{ margin: "8px 0 0", textAlign: "center", lineHeight: 1.5 }}>
-          Your data is encrypted in your browser before it's saved. Prefer it never leaves your computer? The Mac and Windows apps need no account.{" "}<Link href="/privacy">How your data is protected</Link>
+          Your data is encrypted in your browser before it's saved. Prefer it never leaves your computer? The Mac and Windows apps need no account.
         </p>
       </form>
     </main>
