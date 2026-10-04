@@ -23,5 +23,6 @@
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "typescript": "^7.0.2"
-  }
+  },
+  "license": "AGPL-3.0-or-later"
 }

@@ -55,3 +55,7 @@ packages/ui       the React app shared by web and desktop
 apps/web          Next.js website with accounts and Postgres
 apps/desktop      Tauri app for Mac and Windows, local storage
 ```
+
+## License
+
+[GNU AGPL v3.0 or later](LICENSE). If you run a modified version as a public service, you must share your changes under the same license.

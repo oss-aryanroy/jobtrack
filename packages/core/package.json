@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "exports": { ".": "./src/index.ts" },
+  "exports": {
+    ".": "./src/index.ts"
+  },
   "scripts": {
     "gen": "buf generate proto",
     "test": "vitest run",
@@ -17,5 +19,6 @@
     "@bufbuild/protoc-gen-es": "^2.16.0",
     "typescript": "^7.0.2",
     "vitest": "^5.0.3"
-  }
+  },
+  "license": "AGPL-3.0-or-later"
 }
