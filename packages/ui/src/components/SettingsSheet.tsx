@@ -172,7 +172,14 @@ export function SettingsSheet({ onClose }: { onClose(): void }) {
           </div>
         </div>
         <p className="small muted" style={{ margin: 0 }}>
-          {platform.kind === "desktop" ? "Everything is stored on this computer. Nothing is uploaded." : "Your applications are stored in your JobTrack account."}
+          {platform.kind === "desktop" ? (
+            "Everything is stored on this computer. Nothing is uploaded."
+          ) : (
+            <>
+              Your applications are encrypted in this browser before they're saved to your account.{" "}
+              <a href="/privacy" target="_blank" rel="noopener">Privacy</a>
+            </>
+          )}
         </p>
         {platform.account && (
           <div className="grp">

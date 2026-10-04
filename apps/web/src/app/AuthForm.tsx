@@ -108,7 +108,7 @@ export function AuthForm({ mode, notice }: { mode: Mode; notice?: string }) {
           {mode !== "recover" && <Link href="/recover">Forgot password</Link>}
         </p>
         <p className="small muted" style={{ margin: "8px 0 0", textAlign: "center", lineHeight: 1.5 }}>
-          Your data is encrypted in your browser before it's saved. Prefer it never leaves your computer? The Mac and Windows apps need no account.
+          Your data is encrypted in your browser before it's saved. Prefer it never leaves your computer? The Mac and Windows apps need no account.{" "}<Link href="/privacy">How your data is protected</Link>
         </p>
       </form>
     </main>
